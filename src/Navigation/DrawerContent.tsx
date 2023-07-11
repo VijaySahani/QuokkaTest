@@ -15,7 +15,9 @@ function CustomDrawer({props, navigation}: any) {
       <View style={styles.safeView}>
         <DrawerContentScrollView {...props}>
           <View style={{flex: 1}}>
-            <TouchableOpacity style={styles.touchableHome}>
+            <TouchableOpacity style={styles.touchableHome}
+            onPress={()=>navigation.navigate("Home")}
+            >
               <Text>Home</Text>
             </TouchableOpacity>
           </View>
@@ -49,6 +51,7 @@ const styles = StyleSheet.create({
   bottomView: {
     alignItems: 'center',
     justifyContent: 'center',
+    paddingBottom:RFValue(25)
   },
   versionText: {
     color: '#000',

@@ -4,63 +4,67 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import React, {Component} from 'react';
-import {RFPercentage, RFValue} from 'react-native-responsive-fontsize';
-import {login} from '../Redux/action/user';
-import {connect} from 'react-redux';
-import {AnyAction, bindActionCreators, Dispatch} from 'redux';
-import CheckBox from 'react-native-check-box';
+} from "react-native";
+import React, { Component } from "react";
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize";
+import { login } from "../Redux/action/user";
+import { connect } from "react-redux";
+import { AnyAction, bindActionCreators, Dispatch } from "redux";
+import CheckBox from "react-native-check-box";
 
 interface props {
-  login: any;
-  navigation: any;
+  email: any;
+  password: any;
+  toggleCheck: any;
+  isemailErrorText: any;
+  ispasswordErrorText: any;
 }
-import InpuText from '../Components/Textinput';
-import {enableLegacyWebImplementation} from 'react-native-gesture-handler';
+import InpuText from "../Components/Textinput";
+import { enableLegacyWebImplementation } from "react-native-gesture-handler";
 
-const passReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/
+const passReg = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const emailReg =
   /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 
-class Login extends Component<props> {
+class Login extends Component<{}, props> {
   constructor(props: any) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       toggleCheck: false,
       isemailErrorText: false,
       ispasswordErrorText: false,
     };
   }
 
-  onSubmit = () => {
-    const {email, password, toggleCheck} = this.state;
-    if (email?.toLowerCase().match(emailReg)) {
-      console.log("password.match(passReg) ",password.match(passReg),password);
-      
-      if (password.match(passReg)) {
-        if (toggleCheck) {
-          this.props?.login(email, password, this.props.navigation);
+  render() {
+    const { email, isemailErrorText, ispasswordErrorText } = this.state;
+
+    const { navigation, login }: any = this.props;
+
+    const onSubmit = () => {
+      const { email, password, toggleCheck } = this.state;
+      if (email?.toLowerCase().match(emailReg)) {
+        console.log(
+          "password.match(passReg) ",
+          password.match(passReg),
+          password
+        );
+
+        if (password.match(passReg)) {
+          if (toggleCheck) {
+            login(email, password, navigation);
+          } else {
+            alert("Please accept Terms & conditions");
+          }
         } else {
-          alert('Please accept Terms & conditions');
+          this.setState({ ispasswordErrorText: true });
         }
       } else {
-        this.setState({ispasswordErrorText: true});
+        this.setState({ isemailErrorText: true });
       }
-    } else {
-      this.setState({isemailErrorText: true});
-    }
-  };
-  render() {
-    const {
-      email,
-      password,
-      toggleCheck,
-      isemailErrorText,
-      ispasswordErrorText,
-    } = this.state;
+    };
     return (
       <View style={styles.container}>
         <SafeAreaView>
@@ -69,7 +73,7 @@ class Login extends Component<props> {
             <Text style={styles.headerText}>Login</Text>
           </View>
           {/* Form View */}
-          <View style={{marginTop: RFPercentage(15)}}>
+          <View style={{ marginTop: RFPercentage(15) }}>
             {/* Email View */}
             <View style={styles.emailView}>
               <InpuText
@@ -81,9 +85,11 @@ class Login extends Component<props> {
                   paddingHorizontal: RFValue(10),
                   borderRadius: RFValue(5),
                 }}
-                onChangeText={(value: any) => this.setState({email: value,isemailErrorText:false})}
-                placeholder={'Please enter email'}
-                placeholderTextColor={ 'grey'}
+                onChangeText={(value: any) =>
+                  this.setState({ email: value, isemailErrorText: false })
+                }
+                placeholder={"Please enter email"}
+                placeholderTextColor={"grey"}
                 keyboardType="email-address"
                 value={email}
               />
@@ -92,10 +98,14 @@ class Login extends Component<props> {
               <View
                 style={{
                   marginTop: RFValue(5),
-                  paddingLeft: RFValue(20),
                   height: RFPercentage(2),
-                }}>
-                <Text style={{color:'red',fontSize:RFValue(14)}}>Please enter correct email</Text>
+                  width: RFPercentage(45),
+                  alignSelf: "center",
+                }}
+              >
+                <Text style={{ color: "red", fontSize: RFValue(14) }}>
+                  Please enter correct email
+                </Text>
               </View>
             ) : (
               <View
@@ -103,17 +113,21 @@ class Login extends Component<props> {
                   marginTop: RFValue(5),
                   paddingLeft: RFValue(20),
                   height: RFPercentage(2),
-                }}>
+                  width: RFPercentage(45),
+                  alignSelf: "center",
+                }}
+              >
                 <Text></Text>
               </View>
             )}
             {/* Password View */}
             <View
               style={{
-                alignItems: 'center',
-                justifyContent: 'center',
+                alignItems: "center",
+                justifyContent: "center",
                 marginTop: RFPercentage(4),
-              }}>
+              }}
+            >
               <InpuText
                 style={{
                   borderWidth: 1,
@@ -123,9 +137,11 @@ class Login extends Component<props> {
                   paddingHorizontal: RFValue(10),
                   borderRadius: RFValue(5),
                 }}
-                onChangeText={(value: any) => this.setState({password: value,ispasswordErrorText:false})}
-                placeholder={'Please enter password'}
-                placeholderTextColor={ 'grey'}
+                onChangeText={(value: any) =>
+                  this.setState({ password: value, ispasswordErrorText: false })
+                }
+                placeholder={"Please enter password"}
+                placeholderTextColor={"grey"}
                 keyboardType="default"
                 secureTextEntry={true}
               />
@@ -136,8 +152,13 @@ class Login extends Component<props> {
                   marginTop: RFValue(5),
                   paddingLeft: RFValue(20),
                   height: RFPercentage(2),
-                }}>
-                <Text style={{color:'red',fontSize:RFValue(11.5)}}>Password must contain 8 characters ,1 uppercase,1 letter</Text>
+                  width: RFPercentage(45),
+                  alignSelf: "center",
+                }}
+              >
+                <Text style={{ color: "red", fontSize: RFValue(11.5) }}>
+                  Password must contain 8 characters ,1 uppercase,1 letter
+                </Text>
               </View>
             ) : (
               <View
@@ -145,18 +166,21 @@ class Login extends Component<props> {
                   marginTop: RFValue(5),
                   paddingLeft: RFValue(20),
                   height: RFPercentage(2),
-                }}>
+                }}
+              >
                 <Text></Text>
               </View>
             )}
             <View
               style={{
-                flexDirection: 'row',
+                flexDirection: "row",
                 marginTop: RFPercentage(5),
-                alignItems: 'flex-start',
-              }}>
+                alignItems: "flex-start",
+                justifyContent: "center",
+              }}
+            >
               <CheckBox
-                style={{paddingLeft: RFValue(15), paddingRight: RFValue(5)}}
+                style={{ paddingRight: RFValue(15) }}
                 onClick={() => {
                   this.setState({
                     toggleCheck: !this.state.toggleCheck,
@@ -164,7 +188,13 @@ class Login extends Component<props> {
                 }}
                 isChecked={this.state.toggleCheck}
               />
-              <Text style={{color: '#000', fontSize: RFValue(12)}}>
+              <Text
+                style={{
+                  color: "#000",
+                  fontSize: RFValue(12),
+                  width: RFPercentage(40),
+                }}
+              >
                 By logging in, I accept the terms & conditions of the platform
               </Text>
             </View>
@@ -172,27 +202,29 @@ class Login extends Component<props> {
             <View
               style={{
                 marginTop: RFPercentage(5),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <TouchableOpacity
                 style={{
                   borderWidth: 1,
-                  alignItems: 'center',
-                  justifyContent: 'center',
+                  alignItems: "center",
+                  justifyContent: "center",
                   height: RFPercentage(6),
                   width: RFPercentage(25),
                   borderRadius: RFValue(8),
-                  backgroundColor: '#000',
+                  backgroundColor: "#000",
                 }}
-                
-                onPress={() => this.onSubmit()}>
+                onPress={() => onSubmit()}
+              >
                 <Text
                   style={{
                     fontSize: RFValue(18),
-                    color: '#fff',
-                    fontWeight: '500',
-                  }}>
+                    color: "#fff",
+                    fontWeight: "500",
+                  }}
+                >
                   Login
                 </Text>
               </TouchableOpacity>
@@ -200,13 +232,15 @@ class Login extends Component<props> {
             <View
               style={{
                 marginTop: RFPercentage(5),
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
               <Text
-                style={{color: 'blue'}}
-                onPress={() => this.props.navigation.navigate('Signup')}>
-                New User ? Signup 
+                style={{ color: "blue" }}
+                onPress={() => this.props.navigation.navigate("Signup")}
+              >
+                New User ? Signup
               </Text>
             </View>
           </View>
@@ -216,10 +250,10 @@ class Login extends Component<props> {
   }
 }
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => {
-  return bindActionCreators({login}, dispatch);
+  return bindActionCreators({ login }, dispatch);
 };
 
-const mapstateToProps = (state: {user: any}) => {
+const mapstateToProps = (state: { user: any }) => {
   return {
     user: state.user,
   };
@@ -227,12 +261,21 @@ const mapstateToProps = (state: {user: any}) => {
 export default connect(mapstateToProps, mapDispatchToProps)(Login);
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#fff'},
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   headerView: {
     marginTop: RFPercentage(15),
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
-  headerText: {fontSize: RFValue(25), color: '#000'},
-  emailView: {alignItems: 'center', justifyContent: 'center'},
+  headerText: {
+    fontSize: RFValue(25),
+    color: "#000",
+  },
+  emailView: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
